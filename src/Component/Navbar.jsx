@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { use } from 'react';
 import { Link, NavLink } from 'react-router';
-import user from '../assets/user.png'
+import userIcon from '../assets/user.png'
+import { AuthContext } from '../Provider/AuthProvider';
 
 const Navbar = () => {
+    const { user } = use(AuthContext);
+    const handleLogout = () => {
+        console.log('logout clicked');
+    }
     return (
         <div className='flex justify-between items-center'>
-            <div></div>
+            <div className='ml-14 border p-2 text-shadow-amber-400  hover:bg-blue-300 rounded-sm'>{user && user.email}</div>
             <div className='flex gap-4 text-gray-700 ml-20'>
                 <NavLink to='/'>Home</NavLink>
                 <NavLink to='/about'>About</NavLink>
                 <NavLink to='/career'>Career</NavLink>
             </div>
             <div className='flex gap-4 mr-8'>
-                <img src={user} alt="" />
-                <Link to='/auth/login' className='btn btn-primary px-4'>Login</Link>
+                <img src={userIcon} alt="" />
+
+                {
+                    user ? <button onClick={handleLogout} className='btn btn-primary px-4'>Logout</button>
+                        : <Link to='/auth/login' className='btn btn-primary px-4'>Login</Link>
+                }
+
             </div>
         </div>
     );
