@@ -1,15 +1,25 @@
-import React, { useContext } from 'react';
-import { Link } from 'react-router';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { AuthContext } from '../Provider/AuthProvider';
 
 const Register = () => {
+    const[nameError, setNameError] = useState('');
 
-    const {createUser ,setUser} = useContext(AuthContext)
+    const {createUser ,setUser , updateUser} = useContext(AuthContext)
+
+    const navigate = useNavigate();
     const handleRegistration = (e) => {
         e.preventDefault();
         // console.log(e.target);
         const form = e.target;
         const name = form.name.value;
+        if(name.length <5){
+            setNameError('Name must be at least 5 characters long');
+            return;
+        }
+        else{
+            setNameError('');
+        }
         const photoURL = form.photo.value;
         const email = form.email.value;
         const password = form.password.value;
@@ -19,7 +29,13 @@ const Register = () => {
         .then(result =>{
             const user = result.user;
             // console.log(user)
-            setUser(user)
+            
+            updateUser({displayName:name, photoURL:photoURL})
+            .then(()=>{
+                setUser({...user, displayName:name, photoURL:photoURL});
+                navigate('/');
+            })
+            .catch(error=>console.log(error))
         })
         .catch((error) =>{
             const errorCode = error.code;
@@ -37,6 +53,9 @@ const Register = () => {
 
                         <label className="label">Name</label>
                         <input name='name' type="Name" className="input" placeholder="Name" required />
+                        {
+                            nameError && <p className='text-red-600'>{nameError}</p>
+                        }
 
                         <label className="label">Photo URL</label>
                         <input name='photo' type="Name" className="input" placeholder="Photo URL" required />
